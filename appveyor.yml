@@ -54,6 +54,20 @@ install:
   # Patch buggy cram
   - sh -c "patch C:/Python34/Lib/site-packages/cram.py .cmake/cram-win.patch"
 
+  # Test nanomsg
+  - 'git clone https://github.com/nanomsg/nanomsg'
+  - 'cd nanomsg'
+  - 'mkdir build && cd build'
+  - >
+      cmake
+      -DCMAKE_BUILD_TYPE="%CONFIGURATION%"
+      -G "%GENERATOR%"
+      ..
+  - cmake --build . 0<nul
+  - ctest --output-on-failure --timeout 20 --repeat-until-fail 50 --schedule-random
+  - cd ..
+  - cd ..
+
   - ps: $env:RELEASE_NAME = $env:APPVEYOR_REPO_BRANCH -replace "/", "-"
   # Hack to make git think it is on the tip of the repo branch
   - 'git checkout -B %APPVEYOR_REPO_BRANCH%'
