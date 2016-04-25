@@ -91,12 +91,18 @@ void cr_send_to_runner(const criterion_protocol_msg *message) {
     }
 
     unsigned char *buf = NULL;
-    int read = nn_recv(g_client_socket, &buf, NN_MSG, 0);
+    int read = 0;
 
-    if (read <= 0) {
-        criterion_perror("Could not read ack: %s.\n", nn_strerror(errno));
-        abort();
-    }
+    do {
+        read = nn_recv(g_client_socket, &buf, NN_MSG, 0);
+
+        if (read <= 0) {
+            if (read == -1 && errno == EFSM)
+                continue;
+            criterion_perror("Could not read ack: %s.\n", nn_strerror(errno));
+            abort();
+        }
+    } while (read > 0);
 
     criterion_protocol_ack ack;
     pb_istream_t stream = pb_istream_from_buffer(buf, read);
