@@ -59,11 +59,7 @@ install:
   - 'git clone https://github.com/nanomsg/nanomsg'
   - 'cd nanomsg'
   - 'mkdir build && cd build'
-  - >
-      cmake
-      -DCMAKE_BUILD_TYPE="%CONFIGURATION%"
-      -G "%GENERATOR%"
-      ..
+  - sh -c 'CFLAGS="-std=c99 -Wall -Wextra -pedantic" cmake -DCMAKE_BUILD_TYPE="%CONFIGURATION%" -G "%GENERATOR%" ..'
   - cmake --build . 0<nul
   - ctest --output-on-failure --timeout 20 --repeat-until-fail 50 --schedule-random
   - cd ..
