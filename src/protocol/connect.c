@@ -30,7 +30,7 @@
 #include "compat/process.h"
 #include "core/worker.h"
 
-#define URL "ipc://%scriterion_%llu.sock"
+#define URL "ipc://criterion.sock"
 
 #define errno_ignore(Stmt) do { int err = errno; Stmt; errno = err; } while (0)
 
@@ -40,18 +40,7 @@ int bind_server(void) {
     if (sock < 0)
         return -1;
 
-#ifdef VANILLA_WIN32
-    char *prefix = "";
-#else
-    char *prefix = "/tmp/";
-#endif
-
-    char url[256];
-    int rc = snprintf(url, sizeof (url), URL, prefix, get_process_id());
-    if (rc == 256)
-        cr_panic("IPC url too long");
-
-    if (nn_bind(sock, url) < 0)
+    if (nn_bind(sock, URL) < 0)
         goto error;
 
     return sock;
@@ -69,18 +58,7 @@ int connect_client(void) {
     if (sock < 0)
         return -1;
 
-#ifdef VANILLA_WIN32
-    char *prefix = "";
-#else
-    char *prefix = "/tmp/";
-#endif
-
-    char url[256];
-    int rc = snprintf(url, sizeof (url), URL, prefix, get_runner_process_id());
-    if (rc == 256)
-        cr_panic("IPC url too long");
-
-    if (nn_connect (sock, url) < 0)
+    if (nn_connect (sock, URL) < 0)
         goto error;
 
     return sock;
