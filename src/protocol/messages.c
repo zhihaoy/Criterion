@@ -102,7 +102,8 @@ void cr_send_to_runner(const criterion_protocol_msg *message) {
             criterion_perror("Could not read ack: %s.\n", nn_strerror(errno));
             abort();
         }
-    } while (read > 0);
+        break;
+    } while (true);
 
     criterion_protocol_ack ack;
     pb_istream_t stream = pb_istream_from_buffer(buf, read);
