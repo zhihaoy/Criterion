@@ -30,7 +30,7 @@
 #include "compat/process.h"
 #include "core/worker.h"
 
-#define URL "ipc://criterion.sock"
+#define URL "tcp://127.0.0.1:4224"
 
 #define errno_ignore(Stmt) do { int err = errno; Stmt; errno = err; } while (0)
 
