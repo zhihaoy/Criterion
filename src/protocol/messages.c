@@ -90,24 +90,20 @@ void cr_send_to_runner(const criterion_protocol_msg *message) {
         abort();
     }
 
-    struct nn_pollfd pfd = {
-        .fd = g_client_socket,
-        .events = NN_POLLIN,
-    };
-
-    if (nn_poll(&pfd, 1, INT_MAX) != 1) {
-        criterion_perror("Could not poll for ack: %s.\n", nn_strerror(errno));
-        abort();
-    }
-
     unsigned char *buf = NULL;
-    int read = nn_recv(g_client_socket, &buf, NN_MSG, 0);
+    int read = 0;
 
-    if (read <= 0) {
-        criterion_perror("Could not read ack: %s.\n",
-                read == -1 ? nn_strerror(errno) : "No data");
-        abort();
-    }
+    do {
+        read = nn_recv(g_client_socket, &buf, NN_MSG, 0);
+
+        if (read <= 0) {
+            if (read == -1 && errno == EFSM)
+                continue;
+            criterion_perror("Could not read ack: %s.\n", nn_strerror(errno));
+            abort();
+        }
+        break;
+    } while (true);
 
     criterion_protocol_ack ack;
     pb_istream_t stream = pb_istream_from_buffer(buf, read);
