@@ -40,6 +40,8 @@ int bind_server(void) {
     if (sock < 0)
         return -1;
 
+    nn_setsockopt(sock, NN_SOL_SOCKET, NN_LINGER, &(int) {-1}, sizeof (int));
+
     if (nn_bind(sock, URL) < 0)
         goto error;
 
@@ -57,6 +59,8 @@ int connect_client(void) {
     int sock = nn_socket(AF_SP, NN_REQ);
     if (sock < 0)
         return -1;
+
+    nn_setsockopt(sock, NN_SOL_SOCKET, NN_LINGER, &(int) {-1}, sizeof (int));
 
     if (nn_connect (sock, URL) < 0)
         goto error;
