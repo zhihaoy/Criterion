@@ -8,6 +8,7 @@ init:
   - set MSYSTEM=MINGW64
   - pacman --noconfirm --needed -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
   - set "PATH=%PATH%;%APPVEYOR_BUILD_FOLDER%\build;%APPVEYOR_BUILD_FOLDER%\build\Debug;%APPVEYOR_BUILD_FOLDER%\build\external\bin;%APPVEYOR_BUILD_FOLDER%\build\external\lib"
+  - reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f
   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1')) 
 
 environment:
