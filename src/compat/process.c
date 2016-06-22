@@ -263,6 +263,8 @@ static void CALLBACK handle_child_terminated(PVOID lpParameter,
         ? WEXITSTATUS(status)
         : WTERMSIG(status);
 
+    Sleep(100);
+
     criterion_protocol_msg msg = criterion_message(death,
             .result = result,
             .has_status = true,
