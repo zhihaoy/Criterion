@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 #define CRITERION_LOGGING_COLORS
+#include <errno.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
@@ -165,7 +166,11 @@ void cr_log(enum criterion_severity severity, const char *msg, ...)
     va_end(args);
 
     if (res == -1) {
-        cr_log_noformat(CR_LOG_ERROR, "Could not format log message");
+        const char base[] = "Could not format log message: ";
+        char errmsg[1024];
+        strcpy(errmsg, base);
+        strncat(errmsg, strerror(errno), sizeof (errmsg) - sizeof (base));
+        cr_log_noformat(CR_LOG_ERROR, errmsg);
         abort();
     }
 
