@@ -23,6 +23,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <locale.h>
 #include <csptr/smalloc.h>
 
 #include "criterion/internal/parameterized.h"
@@ -187,6 +188,10 @@ static int run_test_child(void)
 #ifndef ENABLE_VALGRIND_ERRORS
     VALGRIND_DISABLE_ERROR_REPORTING;
 #endif
+
+    /* the child also needs to initialize the locale, otherwise
+       wchat_t -> char conversions will fail. */
+    setlocale(LC_ALL, "");
 
     struct criterion_test test;
     memset(&test, 0, sizeof (test));
