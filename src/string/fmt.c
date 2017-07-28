@@ -91,10 +91,14 @@ int cr_vasprintf(char **strp, const char *fmt, va_list ap)
     size_t size = 0;
     char *out = NULL;
     int rc = cri_fmt_vbprintf(&out, NULL, &size, fmt, ap);
-    if (rc < 0)
-        return rc;
-    if (size > (size_t) INT_MAX)
-        return -EOVERFLOW;
+    if (rc < 0) {
+        errno = -rc;
+        return -1;
+    }
+    if (size > (size_t) INT_MAX) {
+        errno = EOVERFLOW;
+        return -1;
+    }
     *strp = out;
     return size;
 }
