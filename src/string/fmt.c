@@ -25,7 +25,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 #include <limits.h>
+#include <locale.h>
 
 #include "fmt.h"
 
@@ -49,6 +51,12 @@ int cri_fmt_vbprintf(char **buf, size_t *offset, size_t *sz,
     if (!offset)
         offset = &offset_start;
 
+    char oldcharset[128];
+    char *val = setlocale(LC_CTYPE, NULL);
+    strncpy(oldcharset, val, sizeof (oldcharset) - 1);
+
+    setlocale(LC_CTYPE, "en_US.UTF-8");
+
     va_copy(vl, ap);
 #ifdef _WIN32
     int size = _vscprintf(fmt, vl);
@@ -57,15 +65,18 @@ int cri_fmt_vbprintf(char **buf, size_t *offset, size_t *sz,
 #endif
     va_end(vl);
 
+    int rc = 0;
     if (size < 0) {
-        return -errno;
+        rc = -errno;
+        goto err;
     }
 
     size_t nsz = *sz + size;
 
     char *nb = realloc(*buf, nsz + 1);
     if (!nb) {
-        return -errno;
+        rc = -errno;
+        goto err;
     }
     *buf = nb;
 
@@ -73,7 +84,9 @@ int cri_fmt_vbprintf(char **buf, size_t *offset, size_t *sz,
 
     *offset += size;
     *sz = nsz;
-    return 0;
+err:
+    setlocale(LC_CTYPE, oldcharset);
+    return rc;
 }
 
 int cr_asprintf(char **strp, const char *fmt, ...)
