@@ -1,9 +1,9 @@
 set(SAMPLES
+  bug216.c
   failmessages.c
   exit.c
   long-messages.c
   other-crashes.c
-
 )
 
 if (CMAKE_CXX_COMPILER_WORKS)
