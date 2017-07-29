@@ -36,6 +36,7 @@
 #include "protocol/connect.h"
 #include "protocol/messages.h"
 #include "compat/alloc.h"
+#include "compat/encoding.h"
 #include "compat/time.h"
 #include "compat/posix.h"
 #include "compat/processor.h"
@@ -323,6 +324,8 @@ static int criterion_run_all_tests_impl(struct criterion_test_set *set)
             criterion_pimportant(CRITERION_PREFIX_DASHES,
                     _(msg_valgrind_jobs), CR_FG_BOLD, CR_RESET);
     }
+
+    cri_encoding_set(criterion_options.encoding);
 
     char url[sizeof ("ipc://" NN_SOCKET_PATH "criterion_.sock") + 21];
     snprintf(url, sizeof (url), "ipc://" NN_SOCKET_PATH "criterion_%llu.sock", get_process_id());

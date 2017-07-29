@@ -205,7 +205,7 @@ msgstr "Die Anweisung `%1$s` hat eine Instanz der Ausname `%2$s` geworfen."
 msgid "The statement `%1$s` did not throw an instance of the `%2$s` exception."
 msgstr "Die Anweisung `%1$s` hat keine Instanz der Ausname `%2$s` geworfen."
 
-#: src/core/runner.c:68
+#: src/core/runner.c:71
 #, c-format
 msgid ""
 "%1$sWarning! Criterion has detected that it is running under valgrind, but "

@@ -207,7 +207,7 @@ msgstr "L'instruction `%1$s` a levé une instance de l'exception `%2$s`."
 msgid "The statement `%1$s` did not throw an instance of the `%2$s` exception."
 msgstr "L'instruction `%1$s` n'a pas levé d'instance de l'exception `%2$s`."
 
-#: src/core/runner.c:68
+#: src/core/runner.c:71
 #, c-format
 msgid ""
 "%1$sWarning! Criterion has detected that it is running under valgrind, but "
