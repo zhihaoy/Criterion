@@ -1,6 +1,6 @@
 Bug 216
 
-  $ bug216.c.bin --verbose
+  $ bug216.c.bin --verbose --encoding=UTF-8
   [----] Criterion v2.3.2
   [====] Running 2 tests from bug216:
   [RUN ] bug216::utf16
