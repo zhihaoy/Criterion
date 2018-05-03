@@ -55,7 +55,11 @@ int cri_fmt_vbprintf(char **buf, size_t *offset, size_t *sz,
     char *val = setlocale(LC_CTYPE, NULL);
     strncpy(oldcharset, val, sizeof (oldcharset) - 1);
 
+#ifdef _WIN32
+    setlocale(LC_CTYPE, "english_us.65001");
+#else
     setlocale(LC_CTYPE, "en_US.UTF-8");
+#endif
 
     va_copy(vl, ap);
 #ifdef _WIN32
