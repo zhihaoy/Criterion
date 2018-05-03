@@ -192,7 +192,6 @@ static int run_test_child(void)
     /* the child also needs to initialize the locale, otherwise
        wchat_t -> char conversions will fail. */
     setlocale(LC_ALL, "");
-    cri_encoding_set(criterion_options.encoding);
 
     struct criterion_test test;
     memset(&test, 0, sizeof (test));
