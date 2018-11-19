@@ -56,17 +56,6 @@ jobs:
     os: linux
     compiler: gcc
 
-  # OSX GCC 4.9
-  - stage: build
-    os: osx
-    osx_image: xcode8
-    compiler: gcc-4.9
-
-  # OSX Clang
-  - stage: build
-    os: osx
-    compiler: clang
-
   allow_failures:
   - stage: build
     compiler: gcc
@@ -168,50 +157,3 @@ script:
   - cd build
   - ninja
   - ninja test
-
-#after_success:
-#  - |
-#      if [ "$COVERAGE" = "ON" ]; then
-#        make gcov
-#        bash <(curl -s https://codecov.io/bash)
-#      fi
-#
-#before_deploy:
-#  - make install
-#  - tar -cvjf ../criterion-${TRAVIS_TAG}-${TRAVIS_OS_NAME}-x86_64.tar.bz2 criterion-${TRAVIS_TAG}
-#  - cd ..
-#  - |
-#      if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-#        brew install gnu-tar --with-default-names
-#        export PATH="/usr/local/bin:$PATH"
-#      fi
-#  - ./.cmake/git-archive-all.sh --prefix criterion-${TRAVIS_TAG} criterion-${TRAVIS_TAG}.tar && bzip2 $_
-#
-#addons:
-#  coverity_scan:
-#    project:
-#      name: "Snaipe/Criterion"
-#      description: "A KISS, Cross-platform C unit testing framework"
-#    notification_email: franklinmathieu@gmail.com
-#    build_command_prepend: "cmake ."
-#    build_command: "make -j4"
-#    branch_pattern: coverity_scan
-
-#deploy:
-#  provider: releases
-#  edge:
-#    branch: releases-fix
-#  skip_cleanup: true
-#  file:
-#    - criterion-${TRAVIS_TAG}-${TRAVIS_OS_NAME}-x86_64.tar.bz2
-#    - criterion-${TRAVIS_TAG}.tar.bz2
-#  on:
-#    repo: Snaipe/Criterion
-#    tags: true
-#    condition: $DEPLOY = true
-#  api_key:
-#    secure: >-
-#      d3l2Ohb2FF3tSXku1d0ASR5dntdnQ48Jyc39IEloDBx
-#      FXCselCkYruUQv6p0TA3P+Dmrz4wS7/AFlBMMsQ3XfG
-#      FVIOnITiTaGWg5fEpIf7zYsDf0zECPE0MOHMGqJMn3/
-#      SrSKdtEA4N84Q4JS7Ou+ewG65mxUDO5Ce60OoEG5JA=
