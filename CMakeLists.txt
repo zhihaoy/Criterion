@@ -94,6 +94,7 @@ cr_add_subproject (boxfort PATH dependencies/boxfort
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${PIC_C_FLAGS} ${VISI_C_FLAGS}"
   CMAKE
+  PATCH boxfort.patch
   IF NOT BOXFORT_FOUND)
 
 cr_add_subproject (git2

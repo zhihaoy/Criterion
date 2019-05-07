@@ -6,7 +6,7 @@ include(CMakeParseArguments)
 
 function (cr_link_package _TARGET _PKG)
   if (${_PKG}_LIB_FOUND OR ${_PKG}_FOUND)
-    target_link_libraries(${_TARGET} ${${_PKG}_LIBRARIES})
+    target_link_libraries(${_TARGET} PRIVATE ${${_PKG}_LIBRARIES})
     include_directories(${${_PKG}_INCLUDE_DIRS})
   endif ()
 endfunction ()
@@ -22,7 +22,7 @@ function (cr_link_libraries _TARGET)
     endif ()
   endif ()
 
-  target_link_libraries(${_TARGET} ${ARGS_UNPARSED_ARGUMENTS})
+  target_link_libraries(${_TARGET} PRIVATE ${ARGS_UNPARSED_ARGUMENTS})
 endfunction ()
 
 function (cr_add_library _LIB)

@@ -7,7 +7,7 @@ include(CMakeParseArguments)
 
 function (cr_add_subproject _NAME)
   set (options CMAKE AUTOTOOLS)
-  set (oneValueArgs GIT PATH PREFIX GENERATOR)
+  set (oneValueArgs GIT PATH PREFIX GENERATOR PATCH)
   set (multiValueArgs OPTS IF)
   cmake_parse_arguments (ARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -48,6 +48,11 @@ function (cr_add_subproject _NAME)
       set (epa_opts SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${ARGS_PATH}")
   endif ()
 
+  if (ARGS_PATCH)
+    set (git_patch_cmd "${GIT_EXECUTABLE}" apply
+      "${CMAKE_CURRENT_SOURCE_DIR}/.cmake/${ARGS_PATCH}")
+  endif ()
+
   if (ARGS_CMAKE)
     if (NOT ARGS_GENERATOR)
       set (ARGS_GENERATOR ${CMAKE_GENERATOR})
@@ -64,6 +69,7 @@ function (cr_add_subproject _NAME)
         -G "${ARGS_GENERATOR}"
         ${ARGS_OPTS}
       BUILD_COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/${_NAME}"
+      --config $<CONFIG>
       INSTALL_COMMAND cmake -E echo "Skipping install step."
     )
     set (install_cmds
@@ -93,6 +99,7 @@ function (cr_add_subproject _NAME)
     BINARY_DIR "${CMAKE_BINARY_DIR}/${_NAME}"
 
     ${build_cmds}
+    PATCH_COMMAND "${git_patch_cmd}"
   )
 
   externalproject_add_step(${_NAME} bootstrap
@@ -113,23 +120,6 @@ function (cr_add_subproject _NAME)
     DEPENDS ${CMAKE_BINARY_DIR}/${_NAME}-dep
   )
 
-  if (WIN32)
-    set ("${_NAME}_SHARED_LIB" "${install_prefix}/lib/${_NAME}.dll" PARENT_SCOPE)
-    if (ARGS_GENERATOR MATCHES "(Unix|MSYS|MinGW) Makefiles")
-      set ("${_NAME}_STATIC_LIB" "${install_prefix}/lib/lib${_NAME}.a" PARENT_SCOPE)
-    else ()
-      set ("${_NAME}_STATIC_LIB" "${install_prefix}/lib/${_NAME}.lib" PARENT_SCOPE)
-    endif ()
-  elseif (APPLE)
-    set ("${_NAME}_SHARED_LIB" "${install_prefix}/lib/lib${_NAME}.dylib" PARENT_SCOPE)
-    set ("${_NAME}_STATIC_LIB" "${install_prefix}/lib/lib${_NAME}.a" PARENT_SCOPE)
-  elseif (UNIX)
-    set ("${_NAME}_SHARED_LIB" "${install_prefix}/lib/lib${_NAME}.so" PARENT_SCOPE)
-    set ("${_NAME}_STATIC_LIB" "${install_prefix}/lib/lib${_NAME}.a" PARENT_SCOPE)
-  else ()
-    message (FATAL_ERROR "Could not set proper library path for the current platform")
-  endif ()
-
 endfunction ()
 
 function (cr_link_subproject _TARGET _SUBPROJECT)
@@ -141,12 +131,13 @@ function (cr_link_subproject _TARGET _SUBPROJECT)
   cmake_parse_arguments (ARGS "${options}" "" "" ${ARGN})
 
   add_dependencies("${_TARGET}" "${_SUBPROJECT}-dependency")
-  if (ARGS_SHARED)
-    target_link_libraries("${_TARGET}" "${${_SUBPROJECT}_SHARED_LIB}")
+
+  if (MSVC)
+    target_link_libraries("${_TARGET}" PRIVATE "${_SUBPROJECT}.lib")
+  else ()
+    target_link_libraries("${_TARGET}" PRIVATE "-l${_SUBPROJECT}")
   endif ()
-  if (ARGS_STATIC)
-    target_link_libraries("${_TARGET}" "${${_SUBPROJECT}_STATIC_LIB}")
-  endif ()
+
 endfunction ()
 
 include_directories(${CMAKE_BINARY_DIR}/external/include)
